@@ -25,18 +25,19 @@ type command struct {
 	flag.TaskBase
 	client *managerclient.Client
 
-	cluster          string
-	dc               []string
-	location         []string
-	keyspace         []string
-	retention        int
-	retentionDays    int
-	rateLimit        []string
-	snapshotParallel []string
-	uploadParallel   []string
-	dryRun           bool
-	showTables       bool
-	purgeOnly        bool
+	cluster             string
+	dc                  []string
+	location            []string
+	keyspace            []string
+	retention           int
+	retentionDays       int
+	rateLimit           []string
+	snapshotParallel    []string
+	uploadParallel      []string
+	dryRun              bool
+	showTables          bool
+	purgeOnly           bool
+	manifestParallelism int
 }
 
 func NewCommand(client *managerclient.Client) *cobra.Command {
@@ -82,6 +83,7 @@ func (cmd *command) init() {
 	w.Keyspace(&cmd.keyspace)
 	w.Unwrap().IntVar(&cmd.retention, "retention", 7, "")
 	w.Unwrap().IntVar(&cmd.retentionDays, "retention-days", 0, "")
+	w.Unwrap().IntVar(&cmd.manifestParallelism, "manifest-parallelism", 1, "")
 	w.Unwrap().StringSliceVar(&cmd.rateLimit, "rate-limit", nil, "")
 	w.Unwrap().StringSliceVar(&cmd.snapshotParallel, "snapshot-parallel", nil, "")
 	w.Unwrap().StringSliceVar(&cmd.uploadParallel, "upload-parallel", nil, "")
@@ -152,6 +154,10 @@ func (cmd *command) run(args []string) error {
 	}
 	if cmd.Flag("purge-only").Changed {
 		props["purge_only"] = cmd.purgeOnly
+		ok = true
+	}
+	if cmd.Flag("manifest-parallelism").Changed {
+		props["manifest-parallelism"] = cmd.purgeOnly
 		ok = true
 	}
 

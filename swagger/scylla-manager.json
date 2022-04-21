@@ -1601,6 +1601,12 @@
             },
             "name": "locations",
             "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "manifest_parallelism",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
